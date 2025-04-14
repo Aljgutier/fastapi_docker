@@ -14,14 +14,15 @@
   - [Authentication](#authentication)
   - [Test](#test)
 - [Dockerize your API](#dockerize-your-api)
+- [Deploy to Google Cloud Run](#deploy-to-google-cloud-run)
 
 # Introduction
 
 This Repo provides getting started examples for dockerizing and deploying a fastAPI Python API.
 
-The `main.py` app in this repo has all the working examples discussed.
+The `main.py` app in this repo has all the working examplesd.
 
-Additionally, the [Jupyter Notebook Examples](./notebook/fast_api_requests.ipynb) in this repo illustrates how to make `http` requests to the deployed the API dockerized fastAPI API application.
+Additionally, the [Jupyter Notebook Examples](./notebook/fast_api_requests.ipynb) illustrate how to make `http` requests to the deployed API and dockerized fastAPI API application.
 
 All the Python packages (and versions) needed to deploy the API are listed in the `requiremts.txt` file. Additional packages to test your applciaton (e.g., Python Requests module) are listed in the `requirements_local.txt` file.
 
@@ -317,7 +318,7 @@ def protected(authorization: str = Header()):  # ✅ Works with Pylance ... prop
 
 Test the authentication with the Jupyter notebook request
 
-```PYthon
+```Python
 
 url = "http://localhost:8000/protected"
 headers = {'Authorization':"token12345"}
@@ -366,8 +367,10 @@ Refer to additional test examples in the Ipython notebook
 
 # Dockerize your API
 
-````sh
-# Use the official Python base image
+In the project directory, create the Dockerfile.
+
+```sh
+
 FROM python:3.9-slim
 
 # Set the working directory inside the container
@@ -386,5 +389,51 @@ COPY . .
 EXPOSE 8080
 
 # Run the FastAPI application using uvicorn server
-CMD ["uvicorn", "fastapi:app", "--host", "0.0.0.0", "--port", "8080"]```
-````
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"]
+
+```
+
+Make sure the Docker daemon is running - launch Docker Desktop and it will start the Docker daamon.
+
+Create the docker image with the docker build command
+
+```sh
+$ docker build -t fastapi_hello_app .
+
+----
+[+] Building 21.3s (11/11) FINISHED
+ => [internal] load build definition from Dockerfile                                                                                              0.0s
+ => => transferring dockerfile: 527B                                                                                                              0.0s
+ => [internal] load .dockerignore                                                                                                                 0.0s
+ => => transferring context: 2B                                                                                                                   0.0s
+ => [internal] load metadata for docker.io/library/python:3.9-slim                                                                                8.1s
+ => [auth] library/python:pull token for registry-1.docker.io                                                                                     0.0s
+ => [internal] load build context                                                                                                                 0.1s
+ => => transferring context: 91.36kB
+```
+
+list the docker images on your machine
+
+```sh
+ docker images
+ ----
+REPOSITORY          TAG       IMAGE ID       CREATED          SIZE
+fastapi_hello_app   latest    c0ab9fecf062   11 seconds ago   150MB
+```
+
+-t tags the immage with `fastapi_hello_app`
+'.' specifies the current working directory
+
+Run the Docker image with the Docker run command.
+
+```sh
+$ docker run -p 8000:8080 fastapi_hello_app
+```
+
+Now type http:0.0.0:8000 into the browser. Your address http:0.0.0:8000 maps port 8080 (Docker) to your port 8000 (Web URL)
+
+```text
+{"Hello":"World"}
+```
+
+# Deploy to Google Cloud Run
