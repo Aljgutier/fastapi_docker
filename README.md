@@ -1,4 +1,19 @@
-# Getting started with Fast API and Docker
+# Getting started with Fast API and Docker <!-- omit from toc -->
+
+## Contents <!-- omit from toc -->\- [Introduction](#introduction)
+
+- [Introduction](#introduction)
+- [FastAPI Introduction](#fastapi-introduction)
+- [Intro to Docker](#intro-to-docker)
+- [FastAPI Main Hello App](#fastapi-main-hello-app)
+  - [Documentation](#documentation)
+  - [Path Parameters](#path-parameters)
+  - [Query Parameters](#query-parameters)
+  - [Post (put) model with Pydantic](#post-put-model-with-pydantic)
+  - [Response (get) Model with Pydantic](#response-get-model-with-pydantic)
+  - [Authentication](#authentication)
+  - [Test](#test)
+- [Dockerize your API](#dockerize-your-api)
 
 # Introduction
 
@@ -6,7 +21,7 @@ This Repo provides getting started examples for dockerizing and deploying a fast
 
 The `main.py` app in this repo has all the working examples discussed.
 
-Additionally, the [Jupyter Notebook Examples](./notebook/fast_api_requests.ipynb) in this repo illustrates how to make `http` requests to the deployed fastAPI and dockerized fastAPI API application.
+Additionally, the [Jupyter Notebook Examples](./notebook/fast_api_requests.ipynb) in this repo illustrates how to make `http` requests to the deployed the API dockerized fastAPI API application.
 
 All the Python packages (and versions) needed to deploy the API are listed in the `requiremts.txt` file. Additional packages to test your applciaton (e.g., Python Requests module) are listed in the `requirements_local.txt` file.
 
@@ -33,11 +48,21 @@ The previously mentioned also provides an excellent overview of Docker [Intro to
 
 Additionally, the following Docker primer [Docker Primer](https://github.com/Aljgutier/docker) is useful for quick reference to Docker commands and an overview of Docker.
 
+On a Mac, its advisable with the Homebrew package manager.
+
+```sh
+$ brew install docker
+$ # or
+$ brew upgrade docker
+```
+
+On a PC, refer to the [Docker install page](https://www.docker.com/products/docker-desktop/).
+
 # FastAPI Main Hello App
 
 The main.py (hello world) fast_api applicaton in this repo is adapted from the following two references - [FastAPI Introduction](https://medium.com/coderhack-com/introduction-to-fastapi-c31f67f5a13), [FastAPI getting started](https://dorian599.medium.com/fastapi-getting-started-3294efe823a0).
 
-These two references a good intro to FastAPI. Some improvements are made so that the corresponding examples work out of the box. Additionally, Python docstrings are added so that VSCode (Lint) does not show annoying warnings.
+These two references a good intro to FastAPI. Some improvement and addition of missing details are made so that the corresponding examples work out of the box. Additionally, Python docstrings are added so that VSCode (Lint) does not show annoying warnings.
 
 Create the main.py application as follows.
 Cd to the project directory
@@ -45,6 +70,8 @@ Cd to the project directory
 ```sh
 $ cd fastapi_docker
 ```
+
+In you favorite coding editor create the main.py application, or you can pull it down from this repo.
 
 With your preffered virtual env manger, create virtual environment. Below a virtual env is setup with `pyenv`
 
@@ -57,12 +84,11 @@ $ pip install fastapi uvicorn
 Create your application in `main.py`
 
 ```Python
-from fastapi import FastAPI
-
-app = FastAPI()
-
 @app.get("/")
 def read_root():
+    """
+    Get root, and respond with ` {"Hello": "World"}`
+    """
     return {"Hello": "World"}
 ```
 
@@ -70,7 +96,7 @@ Start the app with uvicorn
 
 ```sh
 # auto reload when code changes
-#  main is the default here, but we show it explicitly for expository purposes.
+#  main is the default here, but we show it explicitly for expository purposes. You can change the name or default to the main.py and leave it out of the command below.
 $ uvicorn main:app --reload
 ```
 
@@ -337,3 +363,28 @@ test_read_root()
 ```
 
 Refer to additional test examples in the Ipython notebook
+
+# Dockerize your API
+
+````sh
+# Use the official Python base image
+FROM python:3.9-slim
+
+# Set the working directory inside the container
+WORKDIR /app
+
+# Copy the requirements file to the working directory
+COPY requirements.txt .
+
+# Install the Python dependencies
+RUN pip install -r requirements.txt
+
+# Copy the application code to the working directory
+COPY . .
+
+# Expose the port on which the application will run
+EXPOSE 8080
+
+# Run the FastAPI application using uvicorn server
+CMD ["uvicorn", "fastapi:app", "--host", "0.0.0.0", "--port", "8080"]```
+````
