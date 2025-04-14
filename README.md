@@ -1,0 +1,339 @@
+# Getting started with Fast API and Docker
+
+# Introduction
+
+This Repo provides getting started examples for dockerizing and deploying a fastAPI Python API.
+
+The `main.py` app in this repo has all the working examples discussed.
+
+Additionally, the [Jupyter Notebook Examples](./notebook/fast_api_requests.ipynb) in this repo illustrates how to make `http` requests to the deployed fastAPI and dockerized fastAPI API application.
+
+All the Python packages (and versions) needed to deploy the API are listed in the `requiremts.txt` file. Additional packages to test your applciaton (e.g., Python Requests module) are listed in the `requirements_local.txt` file.
+
+# FastAPI Introduction
+
+A concise and excellent overview of FastAPI and Docker is found in the following reference - [Intro to FastAPI and Docker](https://medium.com/@alidu143/containerizing-fastapi-app-with-docker-a-comprehensive-guide-416521b2457c)
+
+1. Fast: FastAPI is built on top of Starlette, an asynchronous web framework, which allows it to handle high loads with incredible speed and efficiency. It is really really fast.
+2. Type Annotations: FastAPI utilizes Python’s type hinting system to provide automatic request/response validation, resulting in enhanced reliability and fewer bugs.
+3. API Documentation: FastAPI generates interactive documentation with Swagger UI and ReDoc, making it effortless to explore and understand API endpoints.
+4. Security: FastAPI supports various authentication methods, including OAuth2, API key validation, and JWT tokens, enabling secure API development.
+5. Asynchronous Support: FastAPI is designed to take advantage of Python’s async and await syntax, enabling efficient handling of I/O-bound operations.
+
+# Intro to Docker
+
+The previously mentioned also provides an excellent overview of Docker [Intro to FastAPI and Docker](https://medium.com/@alidu143/containerizing-fastapi-app-with-docker-a-comprehensive-guide-416521b2457c).
+
+- **Docker Daemon**: The Docker Daemon is a background service that runs on the host machine and manages the lifecycle of containers. It listens to the Docker API requests and handles container operations such as starting, stopping, and monitoring containers.
+- **Containerd**: Containerd is a lightweight container runtime that manages the low-level container operations, including image handling, container execution, and storage.
+  Docker CLI: The Docker Command Line Interface (CLI) is a command-line tool used to interact with Docker. It provides a set of commands to manage Docker images, containers, networks, volumes, and other Docker resources.
+- **Docker Images**: A Docker image is a read-only template that contains all the dependencies, configuration, and code required to run a Docker container. Images are built using a Dockerfile, which defines the instructions to create the image. Images are stored in a registry, such as Docker Hub or a private registry, and can be pulled and run on any Docker-compatible system.
+- **Docker Containers**: A Docker container is a running instance of a Docker image. Containers are isolated environments that encapsulate the application and its dependencies, ensuring consistent behavior across different environments. Each container runs as an isolated process and has its own filesystem, networking, and process space.
+- **Docker Registry**: A Docker registry is a repository that stores Docker images. The most commonly used registry is Docker Hub, which is a public registry that hosts a vast collection of Docker images. You can also set up private registries to store your custom Docker images securely.
+
+Additionally, the following Docker primer [Docker Primer](https://github.com/Aljgutier/docker) is useful for quick reference to Docker commands and an overview of Docker.
+
+# FastAPI Main Hello App
+
+The main.py (hello world) fast_api applicaton in this repo is adapted from the following two references - [FastAPI Introduction](https://medium.com/coderhack-com/introduction-to-fastapi-c31f67f5a13), [FastAPI getting started](https://dorian599.medium.com/fastapi-getting-started-3294efe823a0).
+
+These two references a good intro to FastAPI. Some improvements are made so that the corresponding examples work out of the box. Additionally, Python docstrings are added so that VSCode (Lint) does not show annoying warnings.
+
+Create the main.py application as follows.
+Cd to the project directory
+
+```sh
+$ cd fastapi_docker
+```
+
+With your preffered virtual env manger, create virtual environment. Below a virtual env is setup with `pyenv`
+
+```sh
+$ pyenv virtualenv 3.12.7 venv_fapidckr
+$ pyenv local venv_fapidckr
+$ pip install fastapi uvicorn
+```
+
+Create your application in `main.py`
+
+```Python
+from fastapi import FastAPI
+
+app = FastAPI()
+
+@app.get("/")
+def read_root():
+    return {"Hello": "World"}
+```
+
+Start the app with uvicorn
+
+```sh
+# auto reload when code changes
+#  main is the default here, but we show it explicitly for expository purposes.
+$ uvicorn main:app --reload
+```
+
+In the Browser go to http://localhost:8000
+
+![Hello World App Localhost](./images/hello_world_app.png)
+
+## Documentation
+
+To access the interactive API documentation, go to http://127.0.0.1:8000/docs. FastAPI automatically generates this documentation using Swagger UI.
+
+You can also access alternative API documentation at http://127.0.0.1:8000/redoc, which uses ReDoc.
+
+## Path Parameters
+
+Path parameters are parameters in the path of a URL. They are defined using braces {}. For example, an API with a path parameter for a person's name:
+
+```Python
+# get with Path Parameters
+@app.get("/greet/{name}")
+def greet(name: str):
+    """Get Items
+
+    Args:
+        name (str): url path parameter
+
+    Returns:
+        json: key:"hello", value: "world"
+    """
+    return f"Hello {name}"
+```
+
+Try the followng in your browser
+http://localhost:8000/greet/john
+
+You will then receive the following response in the browser.
+
+`Hello John`
+
+## Query Parameters
+
+Query parameters are key-value pairs in the query string of a URL. For example:
+
+/items?category=clothes&brand=Zara
+
+```Python
+@app.get("/items/")
+def read_parameters(category: str, brand: str):
+    """read query paraemters, key=value pairs in the url string
+
+    Args:
+        category (str): category query parameter
+        brand (str): brand query paraemter
+
+    Returns:
+        dict: keys category and brand
+    """
+    return {"category": category, "brand": brand}
+```
+
+call
+http://localhost:8000/items?category=clothes&brand=Zara
+
+## Post (put) model with Pydantic
+
+```Python
+from pydantic import BaseModel
+
+class ItemPost(BaseModel):
+    """Post Body/Data Model
+
+    Args:
+        BaseModel (BaeModel): Pydantic Base Model
+    """
+
+    name: str
+    description: str = None
+    price: float
+    tax: float = None
+
+
+@app.post("/items_post/")
+def create_item(item: ItemPost):
+    """Create item from post
+    Args:
+        item (ItemPost): item following the ItemPost model
+
+    Returns:
+        ItemPost: returns the item
+    """
+    return item
+```
+
+You can test the HTTP put using the ./notebooks/fast_api_requests.ipynb notebook.
+
+```Python
+# Sample url and data/body
+
+url = "http://localhost:8000/items_post"
+
+data = {
+    "name": "Foo",
+    "description": "A new item",
+    "price": 45.2
+}
+
+response= requests.post(url, json=data)
+response.status_code
+
+print()
+print(f'respone.status_code = {response.status_code}')
+
+if response.status_code == 200:
+    print()
+    print(f'response.json() = {response.json()}')
+```
+
+Produces the following response.
+
+```text
+respone.status_code = 200
+
+response.json() = {'name': 'Foo', 'description': 'A new item', 'price': 45.2, 'tax': None}
+```
+
+## Response (get) Model with Pydantic
+
+```python
+from pydantic import BaseModel
+
+class ItemGet(BaseModel):
+    """Get Model
+
+    Args:
+        BaseModel (BaseModel): PyDantic Base Model
+    """
+
+    name: str
+    description: str
+    price: float
+
+
+@app.get("/items_get/")
+def read_items():
+    """get items
+
+    Returns:
+        itemGet: itemGet type
+    """
+    items = [
+        ItemGet(name="Foo", description="A new item", price=45.2),
+        ItemGet(name="Bar", description="Another item", price=10.5),
+    ]
+    return items
+```
+
+Here we have defined an Item model using Pydantic. In the path operation, we use that model to validate and serialize the request body. When you call /items/ with a request body like:
+
+```json
+{
+  "name": "Foo",
+  "description": "A new item",
+  "price": 45.2
+}
+```
+
+The request body contains the data in a request, for example, in a POST request. You can declare a request body in FastAPI as follows:
+
+```json
+data = {
+    "name": "Foo",
+    "description": "A new item",
+    "price": 45.2
+}
+
+```
+
+Use the Jupyter notebook fast_api_requests.ipynb to make the requests call for this example.
+
+```Python
+url = "http://localhost:8000/items"
+
+response= requests.post(url, json=data)
+
+response.json
+```
+
+returns
+
+```json
+{  'name': 'Foo',
+   'description': 'A new item',
+   'price': 45.2,
+   'tax': None
+}
+```
+
+## Authentication
+
+```python
+@app.get("/protected")
+# def protected(authorization: str):
+def protected(authorization: str = Header()):  # ✅ Works with Pylance ... properly grabs the header fromm authorization otherwise expects header as path parameter
+    # def protected(password: str, required_password: str = "secret"):
+    """return success with valid token
+
+    Args:
+        authorization (str): authorization token
+
+    Returns:
+        str: "success" if token is valid, otherwise returns "invalid token"
+    """
+    if authorization == "token12345":
+        # if password == required_password:
+        return "Success!"
+    return "invalid token"
+```
+
+Test the authentication with the Jupyter notebook request
+
+```PYthon
+
+url = "http://localhost:8000/protected"
+headers = {'Authorization':"token12345"}
+
+response= requests.get(url, headers=headers)
+
+print()
+print(f'respone.status_code = {response.status_code}')
+
+if response.status_code == 200:
+    print()
+    print(f'response.json() = {response.json()}')
+```
+
+You should receive the following response
+
+```txt
+respone.status_code = 200
+
+response.json() = Success!
+```
+
+## Test
+
+FastAPI has test client functionality built-in thanks to Starlette. You can test your API as follows:
+
+Tests are setup in the notebook - ./notebooks/fast_api_requests.ipynb
+
+```python
+import sys
+sys.path.append("..")
+from fastapi.testclient import TestClient
+from hello_world_app import app
+
+client = TestClient(app)
+
+def test_read_root():
+    response = client.get("/")
+    assert response.status_code == 200
+    assert response.json() == {"Hello": "World"}
+
+test_read_root()
+```
+
+Refer to additional test examples in the Ipython notebook
