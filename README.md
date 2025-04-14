@@ -4,7 +4,6 @@
 
 - [Introduction](#introduction)
 - [FastAPI Introduction](#fastapi-introduction)
-- [Intro to Docker](#intro-to-docker)
 - [FastAPI Main Hello App](#fastapi-main-hello-app)
   - [Documentation](#documentation)
   - [Path Parameters](#path-parameters)
@@ -13,7 +12,8 @@
   - [Response (get) Model with Pydantic](#response-get-model-with-pydantic)
   - [Authentication](#authentication)
   - [Test](#test)
-- [Dockerize your API](#dockerize-your-api)
+- [Intro to Docker](#intro-to-docker)
+- [Dockerize and Local Deployment on your Dev Machine](#dockerize-and-local-deployment-on-your-dev-machine)
 - [Deploy to Google Cloud Run](#deploy-to-google-cloud-run)
 
 # Introduction
@@ -35,29 +35,6 @@ A concise and excellent overview of FastAPI and Docker is found in the following
 3. API Documentation: FastAPI generates interactive documentation with Swagger UI and ReDoc, making it effortless to explore and understand API endpoints.
 4. Security: FastAPI supports various authentication methods, including OAuth2, API key validation, and JWT tokens, enabling secure API development.
 5. Asynchronous Support: FastAPI is designed to take advantage of Python’s async and await syntax, enabling efficient handling of I/O-bound operations.
-
-# Intro to Docker
-
-The previously mentioned also provides an excellent overview of Docker [Intro to FastAPI and Docker](https://medium.com/@alidu143/containerizing-fastapi-app-with-docker-a-comprehensive-guide-416521b2457c).
-
-- **Docker Daemon**: The Docker Daemon is a background service that runs on the host machine and manages the lifecycle of containers. It listens to the Docker API requests and handles container operations such as starting, stopping, and monitoring containers.
-- **Containerd**: Containerd is a lightweight container runtime that manages the low-level container operations, including image handling, container execution, and storage.
-  Docker CLI: The Docker Command Line Interface (CLI) is a command-line tool used to interact with Docker. It provides a set of commands to manage Docker images, containers, networks, volumes, and other Docker resources.
-- **Docker Images**: A Docker image is a read-only template that contains all the dependencies, configuration, and code required to run a Docker container. Images are built using a Dockerfile, which defines the instructions to create the image. Images are stored in a registry, such as Docker Hub or a private registry, and can be pulled and run on any Docker-compatible system.
-- **Docker Containers**: A Docker container is a running instance of a Docker image. Containers are isolated environments that encapsulate the application and its dependencies, ensuring consistent behavior across different environments. Each container runs as an isolated process and has its own filesystem, networking, and process space.
-- **Docker Registry**: A Docker registry is a repository that stores Docker images. The most commonly used registry is Docker Hub, which is a public registry that hosts a vast collection of Docker images. You can also set up private registries to store your custom Docker images securely.
-
-Additionally, the following Docker primer [Docker Primer](https://github.com/Aljgutier/docker) is useful for quick reference to Docker commands and an overview of Docker.
-
-On a Mac, its advisable with the Homebrew package manager.
-
-```sh
-$ brew install docker
-$ # or
-$ brew upgrade docker
-```
-
-On a PC, refer to the [Docker install page](https://www.docker.com/products/docker-desktop/).
 
 # FastAPI Main Hello App
 
@@ -365,7 +342,32 @@ test_read_root()
 
 Refer to additional test examples in the Ipython notebook
 
-# Dockerize your API
+# Intro to Docker
+
+The previously mentioned also provides an excellent overview of Docker [Intro to FastAPI and Docker](https://medium.com/@alidu143/containerizing-fastapi-app-with-docker-a-comprehensive-guide-416521b2457c).
+
+- **Docker Daemon**: The Docker Daemon is a background service that runs on the host machine and manages the lifecycle of containers. It listens to the Docker API requests and handles container operations such as starting, stopping, and monitoring containers.
+- **Containerd**: Containerd is a lightweight container runtime that manages the low-level container operations, including image handling, container execution, and storage.
+  Docker CLI: The Docker Command Line Interface (CLI) is a command-line tool used to interact with Docker. It provides a set of commands to manage Docker images, containers, networks, volumes, and other Docker resources.
+- **Docker Images**: A Docker image is a read-only template that contains all the dependencies, configuration, and code required to run a Docker container. Images are built using a Dockerfile, which defines the instructions to create the image. Images are stored in a registry, such as Docker Hub or a private registry, and can be pulled and run on any Docker-compatible system.
+- **Docker Containers**: A Docker container is a running instance of a Docker image. Containers are isolated environments that encapsulate the application and its dependencies, ensuring consistent behavior across different environments. Each container runs as an isolated process and has its own filesystem, networking, and process space.
+- **Docker Registry**: A Docker registry is a repository that stores Docker images. The most commonly used registry is Docker Hub, which is a public registry that hosts a vast collection of Docker images. You can also set up private registries to store your custom Docker images securely.
+
+Additionally, the following Docker primer [Docker Primer](https://github.com/Aljgutier/docker) is useful for quick reference to Docker commands and an overview of Docker.
+
+On a Mac, its advisable with the Homebrew package manager.
+
+```sh
+$ brew install docker
+$ # or
+$ brew upgrade docker
+```
+
+On a PC, refer to the [Docker install page](https://www.docker.com/products/docker-desktop/).
+
+You can manage containers and images (deploy, run, and rm old images and containers) with the Docker UI or on the command line.
+
+# Dockerize and Local Deployment on your Dev Machine
 
 In the project directory, create the Dockerfile.
 
