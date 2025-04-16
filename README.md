@@ -21,17 +21,19 @@
 
 # Introduction
 
-This Repo provides getting started examples for dockerizing and deploying a fastAPI Python API.
+This Repo provides getting started examples for dockerizing and deploying a fastAPI Python API. Included are deplopyment examples to local dev and to GCP.
 
-The `main.py` app in this repo has all the working examplesd.
+The `main.py` app in this repo includes the fastAPI the working examples.
 
 Additionally, the [Jupyter Notebook Examples](./notebook/fast_api_requests.ipynb) illustrate how to make `http` requests to the deployed API and dockerized fastAPI API application.
 
-All the Python packages (and versions) needed to deploy the API are listed in the `requiremts.txt` file. Additional packages to test your applciaton (e.g., Python Requests module) are listed in the `requirements_local.txt` file.
+All the Python packages (and versions) needed to deploy the API are listed in the `requiremts.txt` file. Additional packages to test your applciaton (not requred for the deployed app, e.g., Python Requests module) are listed in the `requirements_local.txt` file.
 
 # FastAPI Introduction
 
-A concise and excellent overview of FastAPI and Docker is found in the following reference - [Intro to FastAPI and Docker](https://medium.com/@alidu143/containerizing-fastapi-app-with-docker-a-comprehensive-guide-416521b2457c)
+FastAPI is concise modern freamwork for building APIs, for example, to serve as a backend API for a front end React applicaton.
+
+An excellent overview of FastAPI and Docker is found in the following reference - [Intro to FastAPI and Docker](https://medium.com/@alidu143/containerizing-fastapi-app-with-docker-a-comprehensive-guide-416521b2457c)
 
 1. Fast: FastAPI is built on top of Starlette, an asynchronous web framework, which allows it to handle high loads with incredible speed and efficiency. It is really really fast.
 2. Type Annotations: FastAPI utilizes Python’s type hinting system to provide automatic request/response validation, resulting in enhanced reliability and fewer bugs.
@@ -111,7 +113,7 @@ def greet(name: str):
 ```
 
 Try the followng in your browser
-http://localhost:8000/greet/john
+http://localhost:8000/greet/John
 
 You will then receive the following response in the browser.
 
