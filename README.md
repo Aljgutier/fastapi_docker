@@ -13,8 +13,11 @@
   - [Authentication](#authentication)
   - [Test](#test)
 - [Intro to Docker](#intro-to-docker)
-- [Dockerize and Local Deployment on your Dev Machine](#dockerize-and-local-deployment-on-your-dev-machine)
-- [Deploy to Google Cloud Run](#deploy-to-google-cloud-run)
+- [Dockerize and Local Deployment](#dockerize-and-local-deployment)
+- [Deployment](#deployment)
+  - [Setup Google Cloud Run](#setup-google-cloud-run)
+- [Deploy Docker Image to Artifact Registry](#deploy-docker-image-to-artifact-registry)
+  - [Authentication](#authentication-1)
 
 # Introduction
 
@@ -367,7 +370,7 @@ On a PC, refer to the [Docker install page](https://www.docker.com/products/dock
 
 You can manage containers and images (deploy, run, and rm old images and containers) with the Docker UI or on the command line.
 
-# Dockerize and Local Deployment on your Dev Machine
+# Dockerize and Local Deployment
 
 In the project directory, create the Dockerfile.
 
@@ -438,6 +441,118 @@ Now type http:0.0.0:8000 into the browser. Your address http:0.0.0:8000 maps por
 {"Hello":"World"}
 ```
 
-# Deploy to Google Cloud Run
+# Deployment
 
-< Under Development>
+You have numerous options for deploying/hosting your Docker containers including
+
+- web solutions, such as AWS (Amazon), GCP (Google), Azure (Microsoft)
+- or even your own local computer.
+
+There are many tradeoffs and reasons that will drive your decision for hosting service including ease of use, cost, and compatability with your technology stack and providers. For example, some services offer free initial hosting but are expensive to scale. Hosting locally is good for intial development but brings significant responsibilities for security, privacy and scale in a production setting.
+
+In my case, the fastAPI backend serves a front-end (UI) service hosted on yet a different platform. GCP hosting on Cloud Run makes sense since the data storage is in the Big Query Data Warehouse (on GCP) and the Cloud Run hosting service and infrastructure is among the most cost effective (serverless pricing), scalable (auto-scaling) and offers additional services like IP addresses and HTTPS security.
+
+As a side note, I prefer to build my Docker images locally rather than building remotely, for example by submitting the Dockerfile to the service. This allows better visibility for debug, testing, and cost control.
+
+## Setup Google Cloud Run
+
+Here are listed a set of simplified step by step setup instructions for deploying to the Google Artifact Registry and subsequently deploying to the Google Cloud Run (serverless) service.
+
+- Step 0: Pre-requisite
+  As a pre-requisite GCP CLI and a GCP Project ID are required.
+- Step 1: login to GCP with the GCP CLI
+  `$ google auth login `
+- step 2: Enable the artifact registry with the CLI
+  `$ gcloud services enable artifactregistry.googleapis.com`
+- step 3: create an artifact repository
+  `$ gcloud artifacts repositories create "repo name" --repository-format=docker --location="REGION"--description="description ..."`
+- step 4: list your repositories
+  `$ gcloud artifacts repositories list`
+- step 5: Configure Docker to use the GCP CLI to authenticate requests to the Artifact Registry
+  ` $ gcloud auth configure-docker [REGION]-docker.pkg.dev`
+
+Detailed instructions are found in the following references:
+
+- Pushing Artifacts to Artifact Registry: A Step-by-Step Guide, https://medium.com/@abhinav.90444/title-pushing-artifacts-to-artifact-registry-a-step-by-step-guide-97f825242cfc
+
+- Google Cloud, Artifact Registry, https://cloud.google.com/artifact-registry/docs/docker/store-docker-container-images#gcloud
+
+# Deploy Docker Image to Artifact Registry
+
+As a reminder of your available local images, first list your local Docker images
+
+```text
+$ docker images
+-----
+REPOSITORY          TAG       IMAGE ID       CREATED              SIZE
+fastapi_hello_app   latest    e414682a267c   About a minute ago   150MB
+
+```
+
+**Tag the image**
+
+```sh
+$ docker tag [IMAGE_NAME] \
+gcr.io/[PROJECT_ID]/[REPO_NAME]/[IMAGE_NAME]:[TAG]
+```
+
+Below, for example, `fastapi_hello_app`, and TAG `v-0-0` are replace the IMAGE and TAG fields. You will still need to add your REGION and GCP PROJECT-ID. Here, the tag "v-0-0" is specified. I will update this TAG with a new version number as the image is updated/improved. The choice of tag (on the Registry) is completely up to you.
+
+```sh
+docker tag fastapi_hello_app [REGION]-docker.pkg.dev/[PROJECT ID]/[REPOSITORY]/fastapi_hello_app:v0-0-0
+
+```
+
+**Push to Artifact Registry**
+
+Now we are ready to push this image to the Artifact Registry.
+
+```sh
+$ docker push [REGION]-docker.pkg.dev/[PROJECT ID]/[repo-name]/<[IMAGE]:[TAG]>
+------
+ea680fbff095: Pushed
+v0-0-0: digest: sha256:2bf42bbeb22437ee3172a0e551cef87d3198c1be59caf43c1db4aed578e89622 size: 1993
+```
+
+You can check the GCP Artifact Registry on the Web Console to make sure the image is there.
+
+After issuing the above command notice the shaw digest from the command output. It will be useful for the next section. It is also available on your GCP Artifact Registry console.
+
+**Deploy to Cloud Run**
+
+Here is the pattern for deploying the image to Cloud Run
+
+```sh
+$ gcloud run deploy <service-name> --image <image-registry-url>
+```
+
+The service-name is restricted to alphanumeric characters and dashes (not underscore)
+
+```sh
+$ gcloud run deploy [SERVICE_NAME] --image [REGION]-docker.pkg.dev/[PROJECT ID]/[REPO]/[IMAGE]@sha256:[DIGEST]
+```
+
+For example, the service-name and image-registry-url will take on the following form. You can always copy the URL string from the GCP Artifact Registry Console.
+
+```sh
+$ gcloud run deploy fast-api-hello --image [REGION]-docker.pkg.dev/[PROJECT ID]/[REPO]/[IMAGE]@sha256:2bf42bbeb22437ee3172a0e551cef87d3198c1be59caf43c1db4aed578e89622
+------
+
+Service [fast-api-hello] revision [fast-api-hello-00002-fhr] has been deployed and is serving 100 percent of traffic.
+Service URL: https://fast-api-hello-aa55f576yq-uc.a.run.app
+
+```
+
+When issuing the command you will be asked to allow un-authenticated access. Say yes for now and later we will add authenticaion credentials. Make sure to delete the deployment (cloud run console) when concluding this exercise.
+
+Your service is now deployed.
+
+In your browser, go to the service URL listed in the command output above. You should receive the Hello World response
+
+```json
+{ "Hello": "World" }
+```
+
+## Authentication
+
+Under development
