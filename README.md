@@ -27,7 +27,7 @@ The `main.py` app in this repo includes the fastAPI the working examples.
 
 Additionally, the [Jupyter Notebook Examples](./notebook/fast_api_requests.ipynb) illustrate how to make `http` requests to the deployed API and dockerized fastAPI API application.
 
-All the Python packages (and versions) needed to deploy the API are listed in the `requiremts.txt` file. Additional packages to test your applciaton (not requred for the deployed app, e.g., Python Requests module) are listed in the `requirements_local.txt` file.
+All the Python packages (and versions) needed to deploy the API are listed in the `requiremts.txt` file. Additional packages to test your applciaton (not requred for the deployed app) are listed in the `requirements_local.txt` file.
 
 # FastAPI Introduction
 
@@ -45,7 +45,7 @@ An excellent overview of FastAPI and Docker is found in the following reference 
 
 The main.py (hello world) fast_api applicaton in this repo is adapted from the following two references - [FastAPI Introduction](https://medium.com/coderhack-com/introduction-to-fastapi-c31f67f5a13), [FastAPI getting started](https://dorian599.medium.com/fastapi-getting-started-3294efe823a0).
 
-These two references a good intro to FastAPI. Some improvement and addition of missing details are made so that the corresponding examples work out of the box. Additionally, Python docstrings are added so that VSCode (Lint) does not show annoying warnings.
+These two references a good intro to FastAPI. Some improvements including addition of missing details and setup in a realistic setting are made so that the corresponding examples work out of the box. Additionally, Python docstrings are added so that VSCode (Lint) does not show annoying warnings.
 
 Create the main.py application as follows.
 Cd to the project directory
