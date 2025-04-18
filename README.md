@@ -4,7 +4,7 @@
 
 - [Introduction](#introduction)
 - [FastAPI Introduction](#fastapi-introduction)
-- [FastAPI Main Hello App](#fastapi-main-hello-app)
+- [FastAPI Examples](#fastapi-examples)
   - [Documentation](#documentation)
   - [Path Parameters](#path-parameters)
   - [Query Parameters](#query-parameters)
@@ -43,7 +43,7 @@ An excellent overview of FastAPI and Docker is found in the following reference 
 4. Security: FastAPI supports various authentication methods, including OAuth2, API key validation, and JWT tokens, enabling secure API development.
 5. Asynchronous Support: FastAPI is designed to take advantage of Python’s async and await syntax, enabling efficient handling of I/O-bound operations.
 
-# FastAPI Main Hello App
+# FastAPI Examples
 
 The examples fastAPI examples in this repo are adapted from the following two references - [FastAPI Introduction](https://medium.com/coderhack-com/introduction-to-fastapi-c31f67f5a13), [FastAPI getting started](https://dorian599.medium.com/fastapi-getting-started-3294efe823a0).
 
@@ -397,7 +397,7 @@ Refer to additional test examples in the Ipython notebook
 
 # Intro to Docker
 
-The previously mentioned also provides an excellent overview of Docker [Intro to FastAPI and Docker](https://medium.com/@alidu143/containerizing-fastapi-app-with-docker-a-comprehensive-guide-416521b2457c).
+The previously mentioned reference also provides an excellent overview of Docker [Intro to FastAPI and Docker](https://medium.com/@alidu143/containerizing-fastapi-app-with-docker-a-comprehensive-guide-416521b2457c).
 
 - **Docker Daemon**: The Docker Daemon is a background service that runs on the host machine and manages the lifecycle of containers. It listens to the Docker API requests and handles container operations such as starting, stopping, and monitoring containers.
 - **Containerd**: Containerd is a lightweight container runtime that manages the low-level container operations, including image handling, container execution, and storage.
@@ -408,7 +408,7 @@ The previously mentioned also provides an excellent overview of Docker [Intro to
 
 Additionally, the following Docker primer [Docker Primer](https://github.com/Aljgutier/docker) is useful for quick reference to Docker commands and an overview of Docker.
 
-On a Mac, its advisable with the Homebrew package manager.
+On a Mac, installation is advisable with the Homebrew package manager.
 
 ```sh
 $ brew install docker
@@ -418,7 +418,7 @@ $ brew upgrade docker
 
 On a PC, refer to the [Docker install page](https://www.docker.com/products/docker-desktop/).
 
-You can manage containers and images (deploy, run, and rm old images and containers) with the Docker UI or on the command line.
+You can manage containers and images (deploy, run, and rm old images and containers) with the Docker UI or on the command line. Below we will illustrate command line examples.
 
 # Dockerize with Local Deployment
 
