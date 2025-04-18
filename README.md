@@ -13,7 +13,7 @@
   - [Authentication](#authentication)
   - [Test](#test)
 - [Intro to Docker](#intro-to-docker)
-- [Dockerize and Local Deployment](#dockerize-and-local-deployment)
+- [Dockerize with Local Deployment](#dockerize-with-local-deployment)
 - [Deployment](#deployment)
   - [Setup Google Cloud Run](#setup-google-cloud-run)
 - [Deploy Docker Image to Artifact Registry](#deploy-docker-image-to-artifact-registry)
@@ -21,9 +21,11 @@
 
 # Introduction
 
-This Repo provides getting started examples for dockerizing and deploying a fastAPI Python API. Included are deplopyment examples to local dev and to GCP.
+The objective for this repo is to illustrate how to create a realistic fastAPI backend that serves a UI frontend application including deployment to the cloud and supportive of authentication and authorization.
 
-The `main.py` app in this repo includes the fastAPI the working examples.
+This Repo provides getting started examples for dockerizing and deploying a fastAPI Python API. Included are deplopyment examples to local dev and to GCP including authorization and authentication.
+
+The `main.py` and `app.router.py` and `app.config.py` in this repo includes contains the working code.
 
 Additionally, the [Jupyter Notebook Examples](./notebook/fast_api_requests.ipynb) illustrate how to make `http` requests to the deployed API and dockerized fastAPI API application.
 
@@ -43,18 +45,25 @@ An excellent overview of FastAPI and Docker is found in the following reference 
 
 # FastAPI Main Hello App
 
-The main.py (hello world) fast_api applicaton in this repo is adapted from the following two references - [FastAPI Introduction](https://medium.com/coderhack-com/introduction-to-fastapi-c31f67f5a13), [FastAPI getting started](https://dorian599.medium.com/fastapi-getting-started-3294efe823a0).
+The examples fastAPI examples in this repo are adapted from the following two references - [FastAPI Introduction](https://medium.com/coderhack-com/introduction-to-fastapi-c31f67f5a13), [FastAPI getting started](https://dorian599.medium.com/fastapi-getting-started-3294efe823a0).
 
-These two references a good intro to FastAPI. Some improvements including addition of missing details and setup in a realistic setting are made so that the corresponding examples work out of the box. Additionally, Python docstrings are added so that VSCode (Lint) does not show annoying warnings.
+These two references provide a good intro to FastAPI. Some improvements including addition of missing details and setup in a realistic setting, deployment, and authenticaton and authorization are made so that the corresponding examples work out of the box with the minimal requirements for a backend API. Additionally, Python docstrings are added so that VSCode (Pylint) does not show annoying warnings.
 
-Create the main.py application as follows.
-Cd to the project directory
+The folder structure in these examples is as follows.
 
-```sh
-$ cd fastapi_docker
+```text
+   backend
+       + main.py
+       +- app
+          +  __init__.py
+          + routes.py
 ```
 
-In you favorite coding editor create the main.py application, or you can pull it down from this repo.
+For our purposes the top level project directory is "backend". The `main.py` module is at the top directory. The `app` folder contains the routes.py module where we will define the routes and `__init__.py` , an empty file, specifies to Python that this folder is a Python package which is helpful for organizing your code into sepearte modules, especially as your application grows.
+
+```sh
+$ cd backend
+```
 
 With your preffered virtual env manger, create virtual environment. Below a virtual env is setup with `pyenv`
 
@@ -62,12 +71,45 @@ With your preffered virtual env manger, create virtual environment. Below a virt
 $ pyenv virtualenv 3.12.7 venv_fapidckr
 $ pyenv local venv_fapidckr
 $ pip install fastapi uvicorn
+$ pip local venv_fapidckr
 ```
 
-Create your application in `main.py`
+In you favorite coding editor create the main.py application with the following contents. Here we start the app `app = FastAPI()` and incude the routes defined in app.router. Notice also, following coding best practeces, we have included a docstring at the top of the module. This will add useful documentation and avoid Pylint warnings.
 
 ```Python
-@app.get("/")
+# main.py
+"""
+FastAPI Hello World, Getting Started application, main.py
+
+"""
+
+from fastapi import FastAPI
+from app.router import router
+
+# initialize app
+app = FastAPI()
+
+app.include_router(router)
+```
+
+Next create the router.py file inside the app folder. We will define all our routes in this file.
+
+We begin with the "/" route and respond with a dictionary `{"Hello","World"}
+
+```Python
+# router.py
+"""
+API route definitions
+"""
+
+from fastapi import APIRouter
+from fastapi import Header
+from pydantic import BaseModel
+
+router = APIRouter()
+
+# get hello world
+@router.get("/")
 def read_root():
     """
     Get root, and respond with ` {"Hello": "World"}`
@@ -75,17 +117,22 @@ def read_root():
     return {"Hello": "World"}
 ```
 
-Start the app with uvicorn
+Start the app with uvicorn. We could skip including `main:app` in
+the command but in case we ever change the name or location of the main program we can indicate that in the command line.
 
 ```sh
-# auto reload when code changes
-#  main is the default here, but we show it explicitly for expository purposes. You can change the name or default to the main.py and leave it out of the command below.
 $ uvicorn main:app --reload
 ```
 
 In the Browser go to http://localhost:8000
 
-![Hello World App Localhost](./images/hello_world_app.png)
+You will receive
+
+```json
+{ "Hello": "World" }
+```
+
+as the response
 
 ## Documentation
 
@@ -95,11 +142,11 @@ You can also access alternative API documentation at http://127.0.0.1:8000/redoc
 
 ## Path Parameters
 
-Path parameters are parameters in the path of a URL. They are defined using braces {}. For example, an API with a path parameter for a person's name:
+Now lets get back to defining some additional routes. Path parameters are parameters in the path of a URL and they are defined using braces {}. For example, an API with a path parameter for a person's name works as follows.
 
 ```Python
 # get with Path Parameters
-@app.get("/greet/{name}")
+@router.get("/greet/{name}")
 def greet(name: str):
     """Get Items
 
@@ -117,7 +164,9 @@ http://localhost:8000/greet/John
 
 You will then receive the following response in the browser.
 
-`Hello John`
+```text
+"Hello John"
+```
 
 ## Query Parameters
 
@@ -126,7 +175,8 @@ Query parameters are key-value pairs in the query string of a URL. For example:
 /items?category=clothes&brand=Zara
 
 ```Python
-@app.get("/items/")
+# get with Query Parameters
+@router.get("/items/")
 def read_parameters(category: str, brand: str):
     """read query paraemters, key=value pairs in the url string
 
@@ -140,14 +190,21 @@ def read_parameters(category: str, brand: str):
     return {"category": category, "brand": brand}
 ```
 
-call
+Try the foolowing URL address in your web browser
 http://localhost:8000/items?category=clothes&brand=Zara
+
+You will receive the following response.
+
+```json
+{ "category": "clothes", "brand": "Zara" }
+```
 
 ## Post (put) model with Pydantic
 
-```Python
-from pydantic import BaseModel
+In the following examples we will define an http `body` and define its structure with the Pydantic BaseModel. If the HTTP request body does not conform to the model it will be rejected.
 
+```Python
+# Post with Pydantic Body/Data Model
 class ItemPost(BaseModel):
     """Post Body/Data Model
 
@@ -161,7 +218,7 @@ class ItemPost(BaseModel):
     tax: float = None
 
 
-@app.post("/items_post/")
+@router.post("/items_post/")
 def create_item(item: ItemPost):
     """Create item from post
     Args:
@@ -207,9 +264,11 @@ response.json() = {'name': 'Foo', 'description': 'A new item', 'price': 45.2, 't
 
 ## Response (get) Model with Pydantic
 
-```python
-from pydantic import BaseModel
+Similar to the previous example, in this case we will define a model for the HTTP body using the Pydantic BaseModel.
 
+```python
+
+# Get with Pydantic Return Model
 class ItemGet(BaseModel):
     """Get Model
 
@@ -222,7 +281,7 @@ class ItemGet(BaseModel):
     price: float
 
 
-@app.get("/items_get/")
+@router.get("/items_get/")
 def read_items():
     """get items
 
@@ -236,7 +295,7 @@ def read_items():
     return items
 ```
 
-Here we have defined an Item model using Pydantic. In the path operation, we use that model to validate and serialize the request body. When you call /items/ with a request body like:
+In the path operation, we use that model to validate and serialize the request body. When you call /items/ with a request body like:
 
 ```json
 {
@@ -244,17 +303,6 @@ Here we have defined an Item model using Pydantic. In the path operation, we use
   "description": "A new item",
   "price": 45.2
 }
-```
-
-The request body contains the data in a request, for example, in a POST request. You can declare a request body in FastAPI as follows:
-
-```json
-data = {
-    "name": "Foo",
-    "description": "A new item",
-    "price": 45.2
-}
-
 ```
 
 Use the Jupyter notebook fast_api_requests.ipynb to make the requests call for this example.
@@ -267,9 +315,9 @@ response= requests.post(url, json=data)
 response.json
 ```
 
-returns
+The response is
 
-```json
+```Python
 {  'name': 'Foo',
    'description': 'A new item',
    'price': 45.2,
@@ -280,7 +328,7 @@ returns
 ## Authentication
 
 ```python
-@app.get("/protected")
+@router.get("/protected")
 # def protected(authorization: str):
 def protected(authorization: str = Header()):  # ✅ Works with Pylance ... properly grabs the header fromm authorization otherwise expects header as path parameter
     # def protected(password: str, required_password: str = "secret"):
@@ -372,7 +420,7 @@ On a PC, refer to the [Docker install page](https://www.docker.com/products/dock
 
 You can manage containers and images (deploy, run, and rm old images and containers) with the Docker UI or on the command line.
 
-# Dockerize and Local Deployment
+# Dockerize with Local Deployment
 
 In the project directory, create the Dockerfile.
 
@@ -452,9 +500,9 @@ You have numerous options for deploying/hosting your Docker containers including
 
 There are many tradeoffs and reasons that will drive your decision for hosting service including ease of use, cost, and compatability with your technology stack and providers. For example, some services offer free initial hosting but are expensive to scale. Hosting locally is good for intial development but brings significant responsibilities for security, privacy and scale in a production setting.
 
-In my case, the fastAPI backend serves a front-end (UI) service hosted on yet a different platform. GCP hosting on Cloud Run makes sense since the data storage is in the Big Query Data Warehouse (on GCP) and the Cloud Run hosting service and infrastructure is among the most cost effective (serverless pricing), scalable (auto-scaling) and offers additional services like IP addresses and HTTPS security.
+In my case, the fastAPI backend serves a front-end (UI) service hosted on yet a different platform. GCP hosting on Cloud Run makes sense since the data storage is in the Big Query Data Warehouse (on GCP) and the Cloud Run hosting service and infrastructure is among the most cost effective (serverless pricing), scalable (auto-scaling) and offers additional services like Firebase app authentication services, IP addresses and HTTPS security.
 
-As a side note, I prefer to build my Docker images locally rather than building remotely, for example by submitting the Dockerfile to the service. This allows better visibility for debug, testing, and cost control.
+As a side note, I prefer to build my Docker images locally rather than building remotely. This allows better visibility for debug, testing, and cost control.
 
 ## Setup Google Cloud Run
 
@@ -558,3 +606,5 @@ In your browser, go to the service URL listed in the command output above. You s
 ## Authentication
 
 Under development
+
+https://medium.com/@gabriel.cournelle/firebase-authentication-in-the-backend-with-fastapi-4ff3d5db55ca
