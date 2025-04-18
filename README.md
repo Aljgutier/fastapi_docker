@@ -23,7 +23,7 @@
 
 The objective for this repo is to illustrate how to create a realistic fastAPI backend that serves a UI frontend application including deployment to the cloud and supportive of authentication and authorization.
 
-This Repo provides getting started examples for dockerizing and deploying a fastAPI Python API. Included are deplopyment examples to local dev and to GCP including authorization and authentication.
+The Repo provides getting started examples for dockerizing and deploying a fastAPI Python API. Included are deplopyment examples to local dev and to GCP including authorization and authentication with Firebase.
 
 The `main.py` and `app.router.py` and `app.config.py` in this repo includes contains the working code.
 
@@ -65,7 +65,7 @@ For our purposes the top level project directory is "backend". The `main.py` mod
 $ cd backend
 ```
 
-With your preffered virtual env manger, create virtual environment. Below a virtual env is setup with `pyenv`
+With your preferred virtual env manger, create virtual environment. Below a virtual env is setup with `pyenv`
 
 ```sh
 $ pyenv virtualenv 3.12.7 venv_fapidckr
