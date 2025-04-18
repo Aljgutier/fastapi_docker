@@ -1,6 +1,6 @@
 # Getting started with Fast API and Docker <!-- omit from toc -->
 
-## Contents <!-- omit from toc -->\- [Introduction](#introduction)
+## Contents <!-- omit from toc -->\- [Introduction]
 
 - [Introduction](#introduction)
 - [FastAPI Introduction](#fastapi-introduction)
