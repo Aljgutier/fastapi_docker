@@ -60,7 +60,7 @@ The folder structure in these examples is as follows.
           +- routes.py
 ```
 
-For our purposes the top level project directory is "backend". The `main.py` module is at the top directory. The `app` folder contains the main.py and routes.py modules where we will define the routes and `__init__.py` , an empty file, specifies to Python that this folder is a Python package which is helpful for organizing your code into sepearte modules, especially as your application grows.
+For our purposes the top level project directory is "backend". The `app` folder contains the `main.py` and `routes.py` modules where we will define the routes and `__init__.py` , an empty file, specifies to Python that this folder is a Python package which is helpful for organizing your code into sepearte modules, especially as your application grows.
 
 ```sh
 $ cd backend
