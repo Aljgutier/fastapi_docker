@@ -24,13 +24,11 @@
 
 # Introduction
 
-The objective for this repo is to illustrate how to create a realistic fastAPI backend that serves a UI frontend application including deployment to the cloud and supportive of authentication and authorization.
+The objective for this repo is to illustrate how to create a realistic fastAPI backend that serves a UI frontend application including deployment to the cloud and backend authentication. Included are deplopyment examples to local dev, to GCP Cloud Run and authentication with Firebase.
 
-The Repo provides examples for dockerizing and deploying a fastAPI Python API. Included are deplopyment examples to local dev and to GCP including authorization and authentication with Firebase.
+Working code is included in the github rep0: https://github.com/Aljgutier/fastapi_docker
 
-The `main.py` and `app` forlder in this contains the working code.
-
-Additionally, the [Jupyter Notebook Examples](./notebook/fast_api_requests.ipynb) illustrate how to make `http` requests to the deployed API and dockerized fastAPI API application.
+Additionally, the [Jupyter Notebook Examples](<[./notebook/fast_api_requests.ipynb](https://github.com/Aljgutier/fastapi_docker/tree/main/notebooks)>) illustrate how to make `http` requests to the deployed API and dockerized fastAPI API application.
 
 All the Python packages (and versions) needed to deploy the API are listed in the `requiremts.txt` file. Additional packages to test your applciaton (not requred for the deployed app) are listed in the `requirements_local.txt` file.
 
