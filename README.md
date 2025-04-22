@@ -16,10 +16,11 @@
 - [Dockerize with Local Deployment](#dockerize-with-local-deployment)
 - [Deployment](#deployment)
   - [Setup Google Cloud Run](#setup-google-cloud-run)
-- [Deploy Docker Image to Artifact Registry](#deploy-docker-image-to-artifact-registry)
-  - [Authentication with Firebase](#authentication-with-firebase)
+  - [Deploy Docker Image to Artifact Registry](#deploy-docker-image-to-artifact-registry)
+- [Authentication with Firebase](#authentication-with-firebase)
   - [Firebase Setup](#firebase-setup)
   - [Avoiding CORS issues](#avoiding-cors-issues)
+- [Next Steps](#next-steps)
 
 # Introduction
 
@@ -526,7 +527,7 @@ Detailed instructions are found in the following references:
 
 - Google Cloud, Artifact Registry, https://cloud.google.com/artifact-registry/docs/docker/store-docker-container-images#gcloud
 
-# Deploy Docker Image to Artifact Registry
+## Deploy Docker Image to Artifact Registry
 
 As a reminder of your available local images, first list your local Docker images
 
@@ -602,7 +603,7 @@ In your browser, go to the service URL listed in the command output above. You s
 { "Hello": "World" }
 ```
 
-## Authentication with Firebase
+# Authentication with Firebase
 
 Amongst other thiings, Firebase is an excellent service for supporting OAuth and managing users login and passwords.
 
@@ -744,3 +745,52 @@ app.add_middleware(
     allow_headers=["*"],
 )
 ```
+
+The complete main.py file listing is as follows.
+
+```Python
+# main.py
+"""
+FastAPI Hello World, Getting Started application, main.py
+
+"""
+
+# Firevase
+import firebase_admin
+
+# Corrs
+from fastapi.middleware.cors import CORSMiddleware
+
+from fastapi import FastAPI
+from app.router import router
+
+# importing config will also call load_dotenv to get GOOGLE_APPLICATION_CREDENTIALS
+from app.config import get_settings
+
+# initialize app and routes
+app = FastAPI()
+app.include_router(router)
+
+settings = get_settings()
+origins = [settings.frontend_url]
+
+# Fireebase
+firebase_admin.initialize_app()
+# Debug ... Google FIrebase Check.
+print("Current App Name:", firebase_admin.get_app().project_id)
+
+
+# Corrs
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+```
+
+# Next Steps
+
+Test the API with a frontend application - under development
