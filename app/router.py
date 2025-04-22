@@ -2,9 +2,13 @@
 API route definitions
 """
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from fastapi import Header
 from pydantic import BaseModel
+
+from typing import Annotated
+
+from app.config import get_firebase_user_from_token
 
 router = APIRouter()
 
@@ -117,3 +121,9 @@ def protected(authorization: str = Header()):  # ✅ Works with Pylance
         # if password == required_password:
         return "Success!"
     return "invalid token"
+
+
+@router.get("/userid")
+async def get_userid(user: Annotated[dict, Depends(get_firebase_user_from_token)]):
+    """gets the firebase connected user"""
+    return {"id": user["uid"]}

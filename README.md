@@ -17,7 +17,9 @@
 - [Deployment](#deployment)
   - [Setup Google Cloud Run](#setup-google-cloud-run)
 - [Deploy Docker Image to Artifact Registry](#deploy-docker-image-to-artifact-registry)
-  - [Authentication](#authentication-1)
+  - [Authentication with Firebase](#authentication-with-firebase)
+  - [Firebase Setup](#firebase-setup)
+  - [Avoiding CORS issues](#avoiding-cors-issues)
 
 # Introduction
 
@@ -53,13 +55,13 @@ The folder structure in these examples is as follows.
 
 ```text
    backend
-       + main.py
        +- app
-          +  __init__.py
-          + routes.py
+          +- __init__.py
+          +- main.py
+          +- routes.py
 ```
 
-For our purposes the top level project directory is "backend". The `main.py` module is at the top directory. The `app` folder contains the routes.py module where we will define the routes and `__init__.py` , an empty file, specifies to Python that this folder is a Python package which is helpful for organizing your code into sepearte modules, especially as your application grows.
+For our purposes the top level project directory is "backend". The `main.py` module is at the top directory. The `app` folder contains the main.py and routes.py modules where we will define the routes and `__init__.py` , an empty file, specifies to Python that this folder is a Python package which is helpful for organizing your code into sepearte modules, especially as your application grows.
 
 ```sh
 $ cd backend
@@ -117,11 +119,10 @@ def read_root():
     return {"Hello": "World"}
 ```
 
-Start the app with uvicorn. We could skip including `main:app` in
-the command but in case we ever change the name or location of the main program we can indicate that in the command line.
+While in the backend directory, launch the API (i.e., "app" ) with uvicorn. The app will reload if any of its files changes. This is convenient as we are developing and changing the app.
 
 ```sh
-$ uvicorn main:app --reload
+$ uvicorn app.main:app --reload
 ```
 
 In the Browser go to http://localhost:8000
@@ -131,8 +132,6 @@ You will receive
 ```json
 { "Hello": "World" }
 ```
-
-as the response
 
 ## Documentation
 
@@ -603,8 +602,145 @@ In your browser, go to the service URL listed in the command output above. You s
 { "Hello": "World" }
 ```
 
-## Authentication
+## Authentication with Firebase
 
-Under development
+Amongst other thiings, Firebase is an excellent service for supporting OAuth and managing users login and passwords.
 
-https://medium.com/@gabriel.cournelle/firebase-authentication-in-the-backend-with-fastapi-4ff3d5db55ca
+## Firebase Setup
+
+We follow the steps in this article for setting up firebase authentication
+
+- https://medium.com/@gabriel.cournelle/firebase-authentication-in-the-backend-with-fastapi-4ff3d5db55ca
+
+We start by setting up firebase
+
+- In the Google console create a firebase project and give it a nmae of your choosing (e.g. "fast_api_users")
+- Next within your new firebase project, go to Project Settings then Service accounts and click Generate new private key
+- Save the file in your backend directory in the file `service-account.json`
+- Create the `.env` file in the backend directory.
+
+```text
+# .env
+ENV=dev
+GOOGLE_APPLICATION_CREDENTIALS="./service-account.json"
+FRONTEND_URL="http://localhost:3000"
+```
+
+- We will need the FRONTEND_URL variable to avoid CORS issues, see below. The FRONTEND_URL corresponds to the default port number for a React application on the localhost. This will be replaced with a deployed URL in a production setting.
+-
+- For security purposes, make sure both of these files (`.env` and `service-account.json`) are listed in your `.gitignore` so that they do not get saved/uploaded to your repository.
+
+- You do not need to include `service-account.json` in the repo as the account key is automatically set for you when you deploy to Cloud Run.
+
+We will add all the config settings to config.py file in the app directory. Our directory and files will look like the following.
+
+```text
+  backend
+     +- app
+         +-- __init__.py
+         +-- router.py
+         +-- config.py
+     main.py
+     .env
+     service-account.json
+     .gitignore
+```
+
+```Python
+# config.py
+"""
+configuration settings
+- google credentials
+- fast api settings
+- get firebase user from token
+"""
+import os
+import pathlib
+from functools import lru_cache
+
+from typing import Annotated, Optional
+from pydantic_settings import BaseSettings
+from dotenv import load_dotenv
+
+from fastapi import Depends, HTTPException, status
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from firebase_admin.auth import verify_id_token
+
+#  env file GOOGLE_APPLICATION_CREDENTIALS
+basedir = pathlib.Path(__file__)  # .parents[1]
+load_dotenv(basedir / ".env")
+
+
+class Settings(BaseSettings):
+    """Main settings"""
+
+    app_name: str = "demofirebase"
+    env: str = os.getenv("ENV", "development")
+    # Needed for CORS
+    frontend_url: str = os.getenv("FRONTEND_URL", "NA")
+
+
+@lru_cache
+def get_settings() -> Settings:
+    """Retrieves the fastapi settings"""
+    return Settings()
+
+
+# use of a simple bearer scheme as auth is handled by firebase and not fastapi
+# we set auto_error to False because fastapi incorrectly returns a 403 intead
+# of a 401
+# see: https://github.com/tiangolo/fastapi/pull/2120
+bearer_scheme = HTTPBearer(auto_error=False)
+
+def get_firebase_user_from_token(
+    token: Annotated[Optional[HTTPAuthorizationCredentials], Depends(bearer_scheme)],
+) -> Optional[dict]:
+    """Uses bearer token to identify firebase user id
+
+    Args:
+        token : the bearer token. Can be None as we set auto_error to False
+
+    Returns:
+        dict: the firebase user on success
+    Raises:
+        HTTPException 401 if user does not exist or token is invalid
+    """
+    try:
+        if not token:
+            # raise and catch to return 401, only needed because fastapi returns 403
+            # by default instead of 401 so we set auto_error to False
+            raise ValueError("No token")
+        user = verify_id_token(token.credentials)
+        return user
+
+    # lots of possible exceptions, see firebase_admin.auth, but most of the time it is a credentials issue
+    except Exception as exc:
+        # see https://fastapi.tiangolo.com/tutorial/security/simple-oauth2/
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Not logged in or Invalid credentials",
+            headers={"WWW-Authenticate": "Bearer"},
+        ) from exc
+```
+
+## Avoiding CORS issues
+
+CORS - Cross Origin Resource Sharing is a browser security feature that restricts web pages from requesting resources from a different domain than the one that served the page. In other words, it prevents one website/service from directly accessing resources from another website.
+
+Therefore, depending on how you deploy your frontend and your backend, you may encounter CORS issues. In fastAPI, CORS issues are easy to deal with.
+
+We add the following to main.py
+
+```Python
+from fastapi.middleware.cors import CORSMiddleware
+import os
+...
+origins = [os.getenv("FRONTEND_URL", "")]
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+```
