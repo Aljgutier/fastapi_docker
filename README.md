@@ -626,7 +626,7 @@ FRONTEND_URL="http://localhost:3000"
 ```
 
 - We will need the FRONTEND_URL variable to avoid CORS issues, see below. The FRONTEND_URL corresponds to the default port number for a React application on the localhost. This will be replaced with a deployed URL in a production setting.
--
+
 - For security purposes, make sure both of these files (`.env` and `service-account.json`) are listed in your `.gitignore` so that they do not get saved/uploaded to your repository.
 
 - You do not need to include `service-account.json` in the repo as the account key is automatically set for you when you deploy to Cloud Run.
