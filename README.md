@@ -14,7 +14,7 @@
   - [Test](#test)
 - [Intro to Docker](#intro-to-docker)
 - [Dockerize with Local Deployment](#dockerize-with-local-deployment)
-- [Deployment](#deployment)
+- [Cloud Deployment](#cloud-deployment)
   - [Setup Google Cloud Run](#setup-google-cloud-run)
   - [Deploy Docker Image to Artifact Registry](#deploy-docker-image-to-artifact-registry)
 - [Authentication with Firebase](#authentication-with-firebase)
@@ -491,7 +491,7 @@ Now type http:0.0.0:8000 into the browser. Your address http:0.0.0:8000 maps por
 {"Hello":"World"}
 ```
 
-# Deployment
+# Cloud Deployment
 
 You have numerous options for deploying/hosting your Docker containers including
 
