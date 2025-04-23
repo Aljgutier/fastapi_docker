@@ -24,7 +24,7 @@
 
 # Introduction
 
-The objective for this repo is to illustrate how to create a realistic API (i.e., backend application) that serves a UI frontend. To that end, we introduce fastAPI, docker and Firebase authenticaiton. Included are deplopyment examples to local dev, to GCP Cloud Run, and authentication with Firebase.
+The objective for this repo is to illustrate how to create a realistic API (i.e., backend application) that serves a UI frontend. To that end, we introduce fastAPI, Docker and Firebase Authenticaiton. Included are deplopyment examples to local dev, to GCP Cloud Run, and authentication with Firebase.
 
 Working code is included in the github repo: https://github.com/Aljgutier/fastapi_docker
 
