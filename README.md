@@ -93,7 +93,7 @@ app = FastAPI()
 app.include_router(router)
 ```
 
-Next create the router.py file inside the app folder. We will define all our routes in this file.
+Next, create the router.py file inside the app folder. We will define all our routes in this file.
 
 We begin with the "/" route and respond with a dictionary `{"Hello","World"}
 
