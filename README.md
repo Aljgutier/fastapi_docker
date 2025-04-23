@@ -26,7 +26,7 @@
 
 The objective for this repo is to illustrate how to create a realistic fastAPI backend with authentication that serves a UI frontend application. Included are deplopyment examples to local dev, to GCP Cloud Run and authentication with Firebase.
 
-Working code is included in the github rep0: https://github.com/Aljgutier/fastapi_docker
+Working code is included in the github repo: https://github.com/Aljgutier/fastapi_docker
 
 Additionally, the [Jupyter Notebook Examples](<[./notebook/fast_api_requests.ipynb](https://github.com/Aljgutier/fastapi_docker/tree/main/notebooks)>) illustrate how to make `http` requests to the deployed API and dockerized fastAPI API application.
 
