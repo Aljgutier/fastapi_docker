@@ -28,7 +28,7 @@ The objective for this repo is to illustrate how to create a realistic fastAPI b
 
 Working code is included in the github repo: https://github.com/Aljgutier/fastapi_docker
 
-Additionally, the [Jupyter Notebook Examples](<[./notebook/fast_api_requests.ipynb](https://github.com/Aljgutier/fastapi_docker/tree/main/notebooks)>) illustrate how to make `http` requests to the deployed API and dockerized fastAPI API application.
+Additionally, the [Jupyter Notebook Examples](<[./notebook/fast_api_requests.ipynb](https://github.com/Aljgutier/fastapi_docker/tree/main/notebooks)>) illustrate how to make `http` requests to the deployed API and dockerized fastAPI application.
 
 All the Python packages (and versions) needed to deploy the API are listed in the `requiremts.txt` file. Additional packages to test your applciaton (not requred for the deployed app) are listed in the `requirements_local.txt` file.
 
