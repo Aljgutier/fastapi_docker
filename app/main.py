@@ -12,7 +12,7 @@ from firebase_admin import credentials
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.router import router
+from app.routes import router
 
 # importing config will also call load_dotenv to get GOOGLE_APPLICATION_CREDENTIALS
 from app.config import get_settings

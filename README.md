@@ -20,7 +20,7 @@
 - [Authentication with Firebase](#authentication-with-firebase)
   - [Firebase Setup](#firebase-setup)
 - [Avoiding CORS issues](#avoiding-cors-issues)
-- [Get User from Token](#get-user-from-token)
+- [Userid Route - Get User from Token](#userid-route---get-user-from-token)
 - [Next Steps](#next-steps)
 
 # Introduction
@@ -614,16 +614,16 @@ We follow the steps in this article for setting up firebase authentication
 
 Start by setting up firebase or use an existing Firebase Project
 
-- In the Google console create a firebase project and give it a nmae of your choosing (e.g. "fast_api_users")
-- Next within your new firebase project, go to Project Settings then Service accounts and click Generate new private key
+- If you don't already have a Firebase project, then in the Google console create a firebase project and give it a nmae of your choosing (e.g. "fast_api_users")
+- Next within firebase project, go to Project Settings then Service accounts and click Generate new private key
 - Save the file in your backend directory in the file `service-account.json`
-- Create the `.env` file in the backend directory.
+- Create the `.env` file in the backend directory with the following content.
 
 ```text
 # .env
 ENV=dev
 GOOGLE_APPLICATION_CREDENTIALS="./service-account.json"
-FRONTEND_URL="http://localhost:3000"
+FRONTEND_URL=http://localhost:3000
 ```
 
 - We will need the FRONTEND_URL variable to avoid CORS issues, see below. The FRONTEND_URL corresponds to the default port number for a React application on the localhost. This will be replaced with a deployed URL in a production setting.
@@ -646,44 +646,62 @@ We will add all the config settings to config.py file in the app directory. Our 
      .gitignore
 ```
 
+Below is listing of the config.py file. The Python `BaseSettings` method imports environment variables and makes them available to other modules (e.g., see main.py, below)
+
+THe `get_firebase_user_from_token` method calls the Firebase service to get the `userid` from the Authorizaton header. This is employed by the `/userid` route, discussed below.
+
 ```Python
 # config.py
 """
 configuration settings
+
 - google credentials
 - fast api settings
 - get firebase user from token
+
 """
-import os
-import pathlib
+
+from pathlib import Path
 from functools import lru_cache
 
 from typing import Annotated, Optional
 from pydantic_settings import BaseSettings
-from dotenv import load_dotenv
 
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from firebase_admin.auth import verify_id_token
-
-#  env file GOOGLE_APPLICATION_CREDENTIALS
-basedir = pathlib.Path(__file__)  # .parents[1]
-load_dotenv(basedir / ".env")
 
 
 class Settings(BaseSettings):
     """Main settings"""
 
     app_name: str = "demofirebase"
-    env: str = os.getenv("ENV", "development")
-    # Needed for CORS
-    frontend_url: str = os.getenv("FRONTEND_URL", "NA")
+    env: str = "development"
+    frontend_url: str = "NA"
+    google_application_credentials: str
+
+    class Config:
+        """
+        .env
+        """
+
+        env_file = str(Path(__file__).resolve().parent.parent / ".env")
 
 
 @lru_cache
 def get_settings() -> Settings:
-    """Retrieves the fastapi settings"""
-    return Settings()
+    """Settings
+
+    Returns:
+        Settings: list of settings
+    """
+
+    try:
+        settings = Settings()
+    except Exception as e:
+        print("Failed to load settings:", e)
+        raise
+    return settings
 
 
 # use of a simple bearer scheme as auth is handled by firebase and not fastapi
@@ -705,6 +723,7 @@ def get_firebase_user_from_token(
     Raises:
         HTTPException 401 if user does not exist or token is invalid
     """
+
     try:
         if not token:
             # raise and catch to return 401, only needed because fastapi returns 403
@@ -721,6 +740,7 @@ def get_firebase_user_from_token(
             detail="Not logged in or Invalid credentials",
             headers={"WWW-Authenticate": "Bearer"},
         ) from exc
+
 ```
 
 # Avoiding CORS issues
@@ -745,7 +765,7 @@ app.add_middleware(
 )
 ```
 
-The complete main.py file listing is as follows.
+The complete main.py file listing follows. Environment variables are imported from `config.py` (`get_settings`)
 
 ```Python
 # main.py
@@ -754,13 +774,14 @@ FastAPI Hello World, Getting Started application, main.py
 
 """
 
-# Firebase
+# Firevase
 import firebase_admin
+from firebase_admin import credentials
 
 # Corrs
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from fastapi import FastAPI
 from app.router import router
 
 # importing config will also call load_dotenv to get GOOGLE_APPLICATION_CREDENTIALS
@@ -774,10 +795,11 @@ settings = get_settings()
 origins = [settings.frontend_url]
 
 # Fireebase
-firebase_admin.initialize_app()
-# Debug ... Google FIrebase Check.
-print("Current App Name:", firebase_admin.get_app().project_id)
+cred = credentials.Certificate(settings.google_application_credentials)
 
+firebase_admin.initialize_app(cred)
+# Debug ... Google FIrebase Check
+print("Current App Name:", firebase_admin.get_app().project_id)
 
 # Corrs
 app.add_middleware(
@@ -790,9 +812,9 @@ app.add_middleware(
 
 ```
 
-# Get User from Token
+# Userid Route - Get User from Token
 
-Next, we add route to the router, which will get the userid from the token.
+Next, we add a route, `/userid`, to get the `userid` from the token. The user_id is returned from the `get_firebase_user_from_token` method in `config.py`.
 
 ```Python
 @router.get("/userid")
@@ -803,4 +825,4 @@ async def get_userid(user: Annotated[dict, Depends(get_firebase_user_from_token)
 
 # Next Steps
 
-Test the API with a frontend application - under development
+An examplar frontend React Application is described [here](https://github.com/Aljgutier/react_firebase). The frontend application illustrates how to send the Autorization header with Firebase token and subsequently displays the `userid`.
