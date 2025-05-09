@@ -1,4 +1,4 @@
-# Getting started with Fast API and Docker <!-- omit from toc -->
+# Getting started with Fast API, Docker and Firebase <!-- omit from toc -->
 
 ## Contents <!-- omit from toc -->
 
