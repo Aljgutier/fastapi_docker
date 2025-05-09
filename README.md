@@ -49,7 +49,7 @@ An excellent overview of FastAPI and Docker is found in the following reference 
 
 The examples fastAPI examples in this repo are adapted from the following two references - [FastAPI Introduction](https://medium.com/coderhack-com/introduction-to-fastapi-c31f67f5a13), [FastAPI getting started](https://dorian599.medium.com/fastapi-getting-started-3294efe823a0).
 
-These two references provide a good intro to FastAPI. Some improvements including addition of missing details and setup in a realistic setting, deployment, and authenticaton and authorization are made so that the corresponding examples work out of the box with the minimal requirements for a backend API. Additionally, Python docstrings are added so that VSCode (Pylint) does not show annoying warnings.
+These two references provide a good intro to FastAPI. Several improvements are made including addition of missing details, setup in a realistic and wholistic setting, authent,ication, coding best practice enhancements, and deployment to Cloud Runner forming a minimal requirements realistic backend API.
 
 The folder structure in these examples is as follows.
 
@@ -605,11 +605,11 @@ In your browser, go to the service URL listed in the command output above. You s
 
 Amongst other thiings, Firebase is an excellent service for supporting OAuth and managing users login and passwords.
 
+We can add Authentication to our API/application with Firebase. This Section follows the deployment section, since in some cases a simple application without authorizaion is preferred. However, if Authorization if required, then first setup the following steps then do the Cloud Run deployment as above.
+
 ## Firebase Setup
 
-We follow the steps in this article for setting up firebase authentication
-
-- https://medium.com/@gabriel.cournelle/firebase-authentication-in-the-backend-with-fastapi-4ff3d5db55ca
+We follow the steps in this [article](https://medium.com/@gabriel.cournelle/firebase-authentication-in-the-backend-with-fastapi-4ff3d5db55ca) for setting up firebase authentication. As before, we make several enhancements.
 
 Start by setting up firebase or use an existing Firebase Project
 
