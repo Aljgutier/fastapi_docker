@@ -2,11 +2,11 @@
 API route definitions
 """
 
+from typing import Annotated
 from fastapi import APIRouter, Depends
 from fastapi import Header
 from pydantic import BaseModel
 
-from typing import Annotated
 
 from app.config import get_firebase_user_from_token
 
@@ -107,7 +107,7 @@ def read_items():
 # Authenticated Protected Route
 @router.get("/protected")
 # def protected(authorization: str):
-def protected(authorization: str = Header()):  # ✅ Works with Pylance
+def protected(authorization: str = Header()):  # Works with Pylance
     # def protected(password: str, required_password: str = "secret"):
     """return success with valid token
 

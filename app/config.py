@@ -7,36 +7,48 @@ configuration settings
 - get firebase user from token
 
 """
-import os
-import pathlib
+
+from pathlib import Path
 from functools import lru_cache
 
 from typing import Annotated, Optional
 from pydantic_settings import BaseSettings
-from dotenv import load_dotenv
 
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from firebase_admin.auth import verify_id_token
-
-#  env file GOOGLE_APPLICATION_CREDENTIALS
-basedir = pathlib.Path(__file__)  # .parents[1]
-load_dotenv(basedir / ".env")
 
 
 class Settings(BaseSettings):
     """Main settings"""
 
     app_name: str = "demofirebase"
-    env: str = os.getenv("ENV", "development")
-    # Needed for CORS
-    frontend_url: str = os.getenv("FRONTEND_URL", "NA")
+    env: str = "development"
+    frontend_url: str = "NA"
+    google_application_credentials: str
+
+    class Config:
+        """
+        .env
+        """
+
+        env_file = str(Path(__file__).resolve().parent.parent / ".env")
 
 
 @lru_cache
 def get_settings() -> Settings:
-    """Retrieves the fastapi settings"""
-    return Settings()
+    """Settings
+
+    Returns:
+        Settings: list of settings
+    """
+
+    try:
+        settings = Settings()
+    except Exception as e:
+        print("Failed to load settings:", e)
+        raise
+    return settings
 
 
 # use of a simple bearer scheme as auth is handled by firebase and not fastapi
@@ -59,6 +71,7 @@ def get_firebase_user_from_token(
     Raises:
         HTTPException 401 if user does not exist or token is invalid
     """
+
     try:
         if not token:
             # raise and catch to return 401, only needed because fastapi returns 403

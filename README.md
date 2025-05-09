@@ -19,7 +19,8 @@
   - [Deploy Docker Image to Artifact Registry](#deploy-docker-image-to-artifact-registry)
 - [Authentication with Firebase](#authentication-with-firebase)
   - [Firebase Setup](#firebase-setup)
-  - [Avoiding CORS issues](#avoiding-cors-issues)
+- [Avoiding CORS issues](#avoiding-cors-issues)
+- [Get User from Token](#get-user-from-token)
 - [Next Steps](#next-steps)
 
 # Introduction
@@ -611,7 +612,7 @@ We follow the steps in this article for setting up firebase authentication
 
 - https://medium.com/@gabriel.cournelle/firebase-authentication-in-the-backend-with-fastapi-4ff3d5db55ca
 
-We start by setting up firebase
+Start by setting up firebase or use an existing Firebase Project
 
 - In the Google console create a firebase project and give it a nmae of your choosing (e.g. "fast_api_users")
 - Next within your new firebase project, go to Project Settings then Service accounts and click Generate new private key
@@ -629,7 +630,7 @@ FRONTEND_URL="http://localhost:3000"
 
 - For security purposes, make sure both of these files (`.env` and `service-account.json`) are listed in your `.gitignore` so that they do not get saved/uploaded to your repository.
 
-- You do not need to include `service-account.json` in the repo as the account key is automatically set for you when you deploy to Cloud Run.
+- You do not need to include `service-account.json` in the repo as the account key (environment variable) is automatically set for you when you deploy to Cloud Run container.
 
 We will add all the config settings to config.py file in the app directory. Our directory and files will look like the following.
 
@@ -722,7 +723,7 @@ def get_firebase_user_from_token(
         ) from exc
 ```
 
-## Avoiding CORS issues
+# Avoiding CORS issues
 
 CORS - Cross Origin Resource Sharing is a browser security feature that restricts web pages from requesting resources from a different domain than the one that served the page. In other words, it prevents one website/service from directly accessing resources from another website.
 
@@ -787,6 +788,17 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+```
+
+# Get User from Token
+
+Next, we add route to the router, which will get the userid from the token.
+
+```Python
+@router.get("/userid")
+async def get_userid(user: Annotated[dict, Depends(get_firebase_user_from_token)]):
+    """gets the firebase connected user"""
+    return {"id": user["uid"]}
 ```
 
 # Next Steps
