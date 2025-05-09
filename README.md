@@ -20,7 +20,7 @@
 - [Authentication with Firebase](#authentication-with-firebase)
   - [Firebase Setup](#firebase-setup)
 - [Avoiding CORS issues](#avoiding-cors-issues)
-- [Userid Route - Get User from Token](#userid-route---get-user-from-token)
+- [Userid Route](#userid-route)
 - [Next Steps](#next-steps)
 
 # Introduction
@@ -58,10 +58,10 @@ The folder structure in these examples is as follows.
        +- app
           +- __init__.py
           +- main.py
-          +- router.py
+          +- routes.py
 ```
 
-For our purposes the top level project directory is "backend". The `app` folder contains the `main.py` and `router.py` modules where we will define the routes and `__init__.py` , an empty file, specifies to Python that this folder is a Python package which is helpful for organizing your code into sepearte modules, especially as your application grows.
+For our purposes the top level project directory is "backend". The `app` folder contains the `main.py` and `routes.py` modules where we will define the routes and `__init__.py` , an empty file, specifies to Python that this folder is a Python package which is helpful for organizing your code into sepearte modules, especially as your application grows.
 
 ```sh
 $ cd backend
@@ -76,17 +76,16 @@ $ pip install fastapi uvicorn
 $ pip local venv_fapidckr
 ```
 
-In you favorite coding editor create the main.py application with the following contents. Here we start the app `app = FastAPI()` and incude the routes defined in app.router. Notice also, following coding best practeces, we have included a docstring at the top of the module. This will add useful documentation and avoid Pylint warnings.
+In you favorite coding editor (`VSCode` recommended) create the main.py application with the following contents. Here we start the app `app = FastAPI()` and include the routes defined in app.routes. Notice also, following coding best practeces, we have included a docstring at the top of the module. This will add useful documentation and avoid Pylint warnings.
 
 ```Python
 # main.py
 """
 FastAPI Hello World, Getting Started application, main.py
-
 """
 
 from fastapi import FastAPI
-from app.router import router
+from app.routes import router
 
 # initialize app
 app = FastAPI()
@@ -94,12 +93,12 @@ app = FastAPI()
 app.include_router(router)
 ```
 
-Next, create the router.py file inside the app folder. We will define all our routes in this file.
+Next, create the routes.py file inside the app folder. We will define all our routes in this file.
 
 We begin with the "/" route and respond with a dictionary `{"Hello","World"}
 
 ```Python
-# router.py
+# routes.py
 """
 API route definitions
 """
@@ -638,7 +637,7 @@ We will add all the config settings to config.py file in the app directory. Our 
   backend
      +- app
          +-- __init__.py
-         +-- router.py
+         +-- routes.py
          +-- config.py
      main.py
      .env
@@ -782,7 +781,7 @@ from firebase_admin import credentials
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.router import router
+from app.routes import router
 
 # importing config will also call load_dotenv to get GOOGLE_APPLICATION_CREDENTIALS
 from app.config import get_settings
@@ -812,9 +811,9 @@ app.add_middleware(
 
 ```
 
-# Userid Route - Get User from Token
+# Userid Route
 
-Next, we add a route, `/userid`, to get the `userid` from the token. The user_id is returned from the `get_firebase_user_from_token` method in `config.py`.
+Next, we add a route, `/userid`, to get the `userid` from the token, `get_firebase_user_from_token` method in `config.py`.
 
 ```Python
 @router.get("/userid")
