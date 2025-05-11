@@ -20,6 +20,8 @@
 - [Authentication with Firebase](#authentication-with-firebase)
   - [Firebase Setup](#firebase-setup)
 - [Avoiding CORS issues](#avoiding-cors-issues)
+  - [CORS](#cors)
+  - [The Complete Main.py](#the-complete-mainpy)
 - [Userid Route](#userid-route)
 - [Next Steps](#next-steps)
 
@@ -746,6 +748,8 @@ def get_firebase_user_from_token(
 
 # Avoiding CORS issues
 
+## CORS
+
 CORS - Cross Origin Resource Sharing is a browser security feature that restricts web pages from requesting resources from a different domain than the one that served the page. In other words, it prevents one website/service from directly accessing resources from another website.
 
 Therefore, depending on how you deploy your frontend and your backend, you may encounter CORS issues. In fastAPI, CORS issues are easy to deal with.
@@ -765,6 +769,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 ```
+
+## The Complete Main.py
 
 The complete main.py file listing follows. Environment variables are imported from `config.py` (`get_settings`)
 
@@ -826,4 +832,4 @@ async def get_userid(user: Annotated[dict, Depends(get_firebase_user_from_token)
 
 # Next Steps
 
-An examplar frontend React Application is described [here](https://github.com/Aljgutier/react_firebase). The frontend application illustrates how to send the Autorization header with Firebase token and subsequently displays the `userid`.
+An examplar frontend React Application is described [here](https://github.com/Aljgutier/react_firebase). The frontend application illustrates how to send the Autorization header with Firebase token and subsequently displays the returned`userid`.
