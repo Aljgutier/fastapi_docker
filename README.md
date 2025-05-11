@@ -31,7 +31,7 @@ Additionally, the [Jupyter Notebook Examples](<[./notebook/fast_api_requests.ipy
 
 A React-Firebse frontend application that uses this backend is demonstrated [here](https://github.com/Aljgutier/react_firebase?tab=readme-ov-file#reset-password). The frontend application sends an authorization bearer token to this backend. As a simple usage example, the backend will get the associated userid from Firebase and send it back to the frontend.
 
-Together a React-Firebase frontend with the fastAPI backend form a modern and effective technology stack for building applications such as analytics platforms, data tools, and scientific applications where Python is the preferred on the backend.
+Together a React-Firebase frontend with the fastAPI backend form a modern and effective technology stack for building applications such as analytics platforms, data tools, and scientific applications where Python is preferred on the backend.
 
 All the Python packages (and versions) needed to deploy the API are listed in the `requiremts.txt` file. Additional packages to test your applciaton (not requred for the deployed app) are listed in the `requirements_local.txt` file.
 
