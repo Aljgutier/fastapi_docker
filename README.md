@@ -77,7 +77,6 @@ With your preferred virtual env manger, create virtual environment. For example,
 $ pyenv virtualenv 3.12.7 venv_fapidckr
 $ pyenv local venv_fapidckr
 $ pip install fastapi uvicorn
-$ pip local venv_fapidckr
 ```
 
 In you favorite coding editor (`VSCode` recommended) create the main.py application with the following contents. Here we start the app `app = FastAPI()` and include the routes defined in app.routes. Notice also, following coding best practeces, we have included a docstring at the top of the module. This will add useful documentation and avoid Pylint warnings.
