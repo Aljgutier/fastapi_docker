@@ -33,7 +33,7 @@ A React-Firebse frontend application that uses this backend is demonstrated [her
 
 Together a React-Firebase frontend with the fastAPI backend form a modern and effective technology stack for building applications such as analytics platforms, data tools, and scientific applications where Python is preferred on the backend.
 
-All the Python packages (and versions) needed to deploy the API are listed in the `requiremts.txt` file. Additional packages to test your applciaton (not requred for the deployed app) are listed in the `requirements_local.txt` file.
+All the Python packages (and versions) needed to deploy the API are contained in the `requiremts.txt` file. Additional packages to test your applciaton (not requred for the deployed app) are contained in the `requirements_local.txt` file.
 
 # FastAPI Introduction
 
