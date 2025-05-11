@@ -29,7 +29,7 @@ The objective for this repo is to illustrate how to create a realistic bakend AP
 
 Additionally, the [Jupyter Notebook Examples](<[./notebook/fast_api_requests.ipynb](https://github.com/Aljgutier/fastapi_docker/tree/main/notebooks)>) illustrate how to make `http` requests to the deployed API and dockerized fastAPI application.
 
-A React Firebse frontend application that uses this backend is demonstrated [here](https://github.com/Aljgutier/react_firebase?tab=readme-ov-file#reset-password). THe frontend application sends an authorization bearer token to this backend. As a simple usage example, the backend will get the associated userid from Firebase and send it back to the frontend.
+A React-Firebse frontend application that uses this backend is demonstrated [here](https://github.com/Aljgutier/react_firebase?tab=readme-ov-file#reset-password). THe frontend application sends an authorization bearer token to this backend. As a simple usage example, the backend will get the associated userid from Firebase and send it back to the frontend.
 
 Together a React-Firebase frontend with the fastAPI backend form a modern and effective technology stack for building applications such as analytics platforms, data tools, and scientific applications where Python is the preferred on the backend.
 
