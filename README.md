@@ -49,7 +49,7 @@ An excellent overview of FastAPI and Docker is found in the following reference 
 
 # FastAPI Examples
 
-The examples examples in this repo are adapted from the following two references - [FastAPI Introduction](https://medium.com/coderhack-com/introduction-to-fastapi-c31f67f5a13), [FastAPI getting started](https://dorian599.medium.com/fastapi-getting-started-3294efe823a0).
+The examples in this repo are adapted from the following two references - [FastAPI Introduction](https://medium.com/coderhack-com/introduction-to-fastapi-c31f67f5a13), [FastAPI getting started](https://dorian599.medium.com/fastapi-getting-started-3294efe823a0).
 
 In this repo, several improvements are made including addition of missing details, setup in a realistic and wholistic setting, authenthication, coding best practice enhancements, and deployment to Cloud Runner and all together forming a minimal requirements realistic backend API.
 
