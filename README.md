@@ -25,11 +25,13 @@
 
 # Introduction
 
-The objective for this repo is to illustrate how to create a realistic API (i.e., backend application) that serves a UI frontend. To that end, we introduce fastAPI, Docker and Firebase Authenticaiton. Included are deplopyment examples to local dev, to GCP Cloud Run, and authentication with Firebase.
-
-Working code is included in the github repo: https://github.com/Aljgutier/fastapi_docker
+The objective for this repo is to illustrate how to create a realistic bakend API ("application") that serves a UI frontend. To that end, we introduce fastAPI, Docker and Firebase Authenticaiton. Included are deplopyment examples to local dev, to GCP Cloud Run, and authentication with Firebase.
 
 Additionally, the [Jupyter Notebook Examples](<[./notebook/fast_api_requests.ipynb](https://github.com/Aljgutier/fastapi_docker/tree/main/notebooks)>) illustrate how to make `http` requests to the deployed API and dockerized fastAPI application.
+
+A Ract Firebse frontend application that uses this backend is hosted [here](https://github.com/Aljgutier/react_firebase?tab=readme-ov-file#reset-password). THe frontend application sends an authorization bearer token to this backend. As a simple usage example, the backend will get the associated userid from Firebase and send it back to the frontend.
+
+Together a React-Firebase frontend with the fastAPI backend form a modern and effective technology stack for building applications such as analytics platforms, data tools, and scientific applications where Python is the preferred on the backend.
 
 All the Python packages (and versions) needed to deploy the API are listed in the `requiremts.txt` file. Additional packages to test your applciaton (not requred for the deployed app) are listed in the `requirements_local.txt` file.
 
