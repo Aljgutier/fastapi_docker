@@ -37,9 +37,9 @@ All the Python packages (and versions) needed to deploy the API are contained in
 
 # FastAPI Introduction
 
-FastAPI is concise modern freamwork for building APIs, for example, to serve as a backend API for a front end React applicaton.
+FastAPI is a concise modern freamwork for building APIs, for example, to serve as a backend API for a front end React applicaton.
 
-An excellent overview of FastAPI and Docker is found in the following reference - [Intro to FastAPI and Docker](https://medium.com/@alidu143/containerizing-fastapi-app-with-docker-a-comprehensive-guide-416521b2457c)
+An excellent overview of FastAPI and Docker is found in the following reference and summarized below - [Intro to FastAPI and Docker](https://medium.com/@alidu143/containerizing-fastapi-app-with-docker-a-comprehensive-guide-416521b2457c)
 
 1. Fast: FastAPI is built on top of Starlette, an asynchronous web framework, which allows it to handle high loads with incredible speed and efficiency. It is really really fast.
 2. Type Annotations: FastAPI utilizes Python’s type hinting system to provide automatic request/response validation, resulting in enhanced reliability and fewer bugs.
