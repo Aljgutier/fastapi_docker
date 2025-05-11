@@ -71,7 +71,7 @@ For our purposes the top level project directory is "backend". The `app` folder 
 $ cd backend
 ```
 
-With your preferred virtual env manger, create virtual environment. Below a virtual env is setup with `pyenv`
+With your preferred virtual env manger, create virtual environment. For example, below a virtual env is setup with `pyenv` - your Python version and virtual environment, of course, will differ.
 
 ```sh
 $ pyenv virtualenv 3.12.7 venv_fapidckr
