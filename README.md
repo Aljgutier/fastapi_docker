@@ -547,7 +547,7 @@ $ docker tag [IMAGE_NAME] \
 gcr.io/[PROJECT_ID]/[REPO_NAME]/[IMAGE_NAME]:[TAG]
 ```
 
-Below, for example, `fastapi_hello_app`, and TAG `v-0-0` are replace the IMAGE and TAG fields. You will still need to add your REGION and GCP PROJECT-ID. Here, the tag "v-0-0" is specified. I will update this TAG with a new version number as the image is updated/improved. The choice of tag (on the Registry) is completely up to you.
+Below, for example, `fastapi_hello_app`, and TAG `v-0-0` replace the IMAGE and TAG fields. You will still need to add your REGION and GCP PROJECT-ID. The choice of tag (on the Registry) is completely up to you.
 
 ```sh
 docker tag fastapi_hello_app [REGION]-docker.pkg.dev/[PROJECT ID]/[REPOSITORY]/fastapi_hello_app:v0-0-0
