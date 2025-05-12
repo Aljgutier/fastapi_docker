@@ -565,7 +565,7 @@ ea680fbff095: Pushed
 v0-0-0: digest: sha256:2bf42bbeb22437ee3172a0e551cef87d3198c1be59caf43c1db4aed578e89622 size: 1993
 ```
 
-You can check the GCP Artifact Registry on the Web Console to make sure the image is there.
+You can check the GCP Artifact Registry on the Web Console to confirm the image is there.
 
 After issuing the above command notice the shaw digest from the command output. It will be useful for the next section. It is also available on your GCP Artifact Registry console.
 
@@ -606,9 +606,9 @@ In your browser, go to the service URL listed in the command output above. You s
 
 # Authentication with Firebase
 
-Amongst other thiings, Firebase is an excellent service for supporting OAuth and managing users login and passwords.
+Amongst other thiings, Firebase is an excellent service for supporting OAuth authorization and managing the user's login and passwords.
 
-We can add Authentication to our API/application with Firebase. This Section follows the deployment section, since in some cases a simple application without authorizaion is preferred. However, if Authorization if required, then first setup the following steps then do the Cloud Run deployment as above.
+In some cases a simple application without authorizaion is preferred. However, if Authorization if required, then first setup the following steps and then do the Cloud Run deployment as above.
 
 ## Firebase Setup
 
