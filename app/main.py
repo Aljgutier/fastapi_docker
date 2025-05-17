@@ -21,8 +21,9 @@ from app.config import get_settings
 app = FastAPI()
 app.include_router(router)
 
+# get settings
 settings = get_settings()
-origins = [settings.frontend_url]
+
 
 # Fireebase
 cred = credentials.Certificate(settings.google_application_credentials)
@@ -32,6 +33,7 @@ firebase_admin.initialize_app(cred)
 print("Current App Name:", firebase_admin.get_app().project_id)
 
 # Corrs
+origins = [settings.frontend_url]  # origin urls for CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
